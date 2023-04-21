@@ -1,0 +1,125 @@
+\documentclass[8pt,letter]{article}
+ 
+%% \usepackage[fleqn]{amsmath}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amsfonts,amsthm,bm}
+\usepackage{breqn}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{tikz}
+\usepackage[ruled,vlined,linesnumbered,lined,boxed,commentsnumbered]{algorithm2e}
+\usepackage{siunitx}
+\usepackage{graphicx}
+\usepackage{subcaption}
+%% \usepackage{datetime}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{mathrsfs}
+\usepackage{fancyhdr}
+\usepackage{fancyvrb}
+\usepackage{parskip} %turns off paragraph indent
+\pagestyle{fancy}
+
+\usepackage{xcolor}
+\usepackage{mdframed}
+
+\usepackage[small]{titlesec}
+
+\usetikzlibrary{arrows}
+
+\DeclareMathOperator*{\argmin}{argmin}
+\newcommand*{\argminl}{\argmin\limits}
+
+\newcommand{\mathleft}{\@fleqntrue\@mathmargin0pt}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}} 
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\ppartial}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\p}{\partial}
+\newcommand{\te}[1]{\text{#1 }}
+\newcommand{\norm}[1]{\|#1\|}
+
+\setcounter{MaxMatrixCols}{20}
+
+% remove excess vertical space for align equations
+\setlength{\abovedisplayskip}{0pt}
+\setlength{\belowdisplayskip}{0pt}
+\setlength{\abovedisplayshortskip}{0pt}
+\setlength{\belowdisplayshortskip}{0pt}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+
+% \newtheorem{mdtheorem}{Theorem}
+% \newenvironment{theorem}
+% {\begin{mdframed}[
+%   backgroundcolor=green!10,
+%   topline=false,
+%   rightline=false,
+%   bottomline=false,
+%   leftline=false
+%   ]\begin{mdtheorem}}
+%     {\end{mdtheorem}\end{mdframed}}
+
+\begin {document}
+
+\lhead{Notes - Tensor/Array Manipulations, Bill (Yuan) Liu}
+
+% \begin{align}
+%   \nabla f_{k+1}^T p_k & \geq c_2 \nabla f_k^T p_k\\
+%   \frac{\partial \phi(\alpha_k)}{\partial \alpha_k} & \geq \frac{\partial \phi(0)}{\partial \alpha_k}\\
+%   &c_1,\alpha_k \in (0,1)\\
+%   &0<c_1<c_2<1
+% \end{align}
+
+\begin{multicols*}{2}
+
+  \section{Einops}
+
+  Reference: https://github.com/arogozhnikov/einops
+  
+  \subsection{Features}
+  
+  \begin{itemize}
+  \item self-documenting notation for layouts of input and output arrays
+  \item low number of backend functions to implement
+  \item focus on data rearrangements and simple transformations (axes reordering, decomposition, composition, reduction, repeats)
+  \item focus on 1 tensor/array transformations
+  \item notation uses strings
+  \item supported notations: named axis, anonymous axis, unitary axis, ellipsis, (de)compose parenthesis
+  \item supports a list of arrays as input with implied additional outer dimension corresponding to the list
+  \item inferrable dimension sizes, given partial info as parameters
+  \item hide backend framework inconsistency of notations for common array rearrangement operations
+  \item use of proxy classes for specific backends
+  \item caching of tensor type map to backend type for performance
+  \item caching of patterns and axes
+  \item caching of patterns, axes, and input shape: compute unknown axis sizes and shape verification on first time, otherwise reuse sequence of commands previously generated
+  \item inverse transformations are easy to read off by switching patterns for input and output
+  \end{itemize}
+
+  \subsection{Approaches}
+  
+  \begin{itemize}
+  \item evidence based for API design, via real world use cases
+  \item explicit separation of a few functions over 1 function, for better error messages
+  \item consideration of adoption friction and ease of use
+  \end{itemize}
+
+  \vfill\null
+  \columnbreak
+    
+  \subsection{Known Issues}
+  \begin{itemize}
+  \item does not enforce axes alignment between operations
+  \item no means of integrated analysis/tracking of shapes
+  \end{itemize}
+  
+  \vfill\null
+  \pagebreak
+  
+\end{multicols*}
+\end {document}
+
+
