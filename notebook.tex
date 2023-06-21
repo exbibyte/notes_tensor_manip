@@ -119,9 +119,11 @@
   \vfill\null
   \pagebreak
 
-  \section{Tensor Derivatives}
+  \section{Tensor Indexing}
 
-  Index notation: $*(s_1,s_2,s_3)$, where\\
+  Index notation (for a binary operation):\\
+  $*(s_1,s_2,s_3)$\\
+  where\\
   $s_1$: input index set\\
   $s_2$: input index set\\
   $s_3$: output index set
@@ -154,7 +156,7 @@
 
   \end{itemize}
 
-  \subsection{Derivative Definition}
+  \section{Derivative Definition}
 
   $f: \R^{n_1 \times .. \times .. n_k} \rightarrow \R^{m_1 \times .. \times m_l}$\\
   $D \in \R^{m_1 \times .. \times m_l \times n_1 \times .. \times n_k}$
@@ -185,14 +187,27 @@
 
   We seek to compute pushforwards for the above types of ops.
 
+  \vfill\null
+  \columnbreak
+    
   \subsection{Pushforward of Unary Function}
   todo
+
+  \vfill\null
+  \columnbreak
 
   \subsection{Pushforward of Elementwise Unary Function}
   todo
 
+  \vfill\null
+  \columnbreak
+
   \subsection{Binary Addition}
-  todo
+  let $C=f(A,B)$ where $f$ is addition\\
+  then, $\bar{C}=\bar{A} + \bar{B}$ (sum of pushforwards of summands) 
+
+  \vfill\null
+  \columnbreak
 
   \subsection{Binary Multiplication}
   todo
