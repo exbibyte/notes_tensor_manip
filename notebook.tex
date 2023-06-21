@@ -118,6 +118,90 @@
   
   \vfill\null
   \pagebreak
+
+  \section{Tensor Derivatives}
+
+  Index notation: $*(s_1,s_2,s_3)$, where\\
+  $s_1$: input index set\\
+  $s_2$: input index set\\
+  $s_3$: output index set
+
+  \subsection{Properties}
+
+  \begin{itemize}
+  \item associative
+    
+    let\\
+    $ s_3 \subseteq s_1 \cup s_2$\\
+    $s_4 \cap (s_1 \cup s_2) = \O$\\
+    then,\\
+    $*(s_3 s_4, s_4, s_3)(*(s_1, s_2 s_4, s_3 s_4)(A,B), C)\\
+    =*(s_1, s_2, s_3)(A, *(s_2 s_4, s_4, s_2)(B,C))$
+
+    order of evaluations:\\
+    $(s_1 \rightarrow s_2 s_4) \rightarrow s_4 \rightarrow s_3$\\
+    vs\\
+    $s_1 \rightarrow (s_2 s_4 \rightarrow s_4) \rightarrow s_3$
+     
+    \item commutative
+
+      $(s_1,s_2,s_3)(A,B) = *(s_2,s_1,s_3)(B,A)$
+    
+    \item distributive
+
+      $*(s_1,s_2,s_3)(A,B) + *(s_1,s_2,s_3)(A,C)\\= *(s_1,s_2,s_3)(A, B+C)$\\
+      where $s_3 \subseteq s_1 \cup s_2$
+
+  \end{itemize}
+
+  \subsection{Derivative Definition}
+
+  $f: \R^{n_1 \times .. \times .. n_k} \rightarrow \R^{m_1 \times .. \times m_l}$\\
+  $D \in \R^{m_1 \times .. \times m_l \times n_1 \times .. \times n_k}$
+
+  $\lim_{h \rightarrow 0} \frac{\| f(x+h) - f(x) - D \circ h\|}{\| h \|} = 0$\\
+  $\iff D$ is a derivative of $f$ at $x$\\
+  
+  where inner tensor product is: \\
+  $D \circ h = *(s_1 s_2, s_2, s_1)(D,h)$
+
+  \vfill\null
+  \columnbreak
+    
+  \section{Forward Mode}
+  $\sum_{i} \frac{ \partial v_i}{\partial x_j} \frac{\partial f}{\partial x_j} = \frac{\partial f}{\partial x_j}$\\
+  where $x_j$ are leaf input variables and\\
+  where pushforwards of predecessor nodes $v_i$ are computed and cached by the time $\frac{\partial f}{\partial x_j}$ is computed\\
+  
+  notation: let $\bar{v} = \frac{\partial v}{\partial x_j}$ be the pushforward of $v$
+
+  Generalized cases of local node connections:
+  \begin{itemize}
+  \item unary function
+  \item element-wise unary function
+  \item binary addition
+  \item binary multiplication
+  \end{itemize}
+
+  We seek to compute pushforwards for the above types of ops.
+
+  \subsection{Pushforward of Unary Function}
+  todo
+
+  \subsection{Pushforward of Elementwise Unary Function}
+  todo
+
+  \subsection{Binary Addition}
+  todo
+
+  \subsection{Binary Multiplication}
+  todo
+
+  \vfill\null
+  \columnbreak
+    
+  \section{Reverse Mode}
+  todo
   
 \end{multicols*}
 \end {document}
