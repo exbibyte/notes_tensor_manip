@@ -1,4 +1,4 @@
-\documentclass[8pt,letter]{article}
+\documentclass[8pt]{extarticle}
  
 %% \usepackage[fleqn]{amsmath}
 \usepackage[margin=1in]{geometry}
@@ -175,7 +175,7 @@
   where $x_j$ are leaf input variables and\\
   where pushforwards of predecessor nodes $v_i$ are computed and cached by the time $\frac{\partial f}{\partial x_j}$ is computed\\
   
-  notation: let $\bar{v} = \frac{\partial v}{\partial x_j}$ be the pushforward of $v$
+  notation: let $\dot{v} = \frac{\partial v}{\partial x_j}$ be the pushforward of $v$
 
   Generalized cases of local node connections:
   \begin{itemize}
@@ -202,16 +202,59 @@
   \vfill\null
   \columnbreak
 
-  \subsection{Binary Addition}
+  \subsection{Pushforward of Binary Addition}
   let $C=f(A,B)$ where $f$ is addition\\
-  then, $\bar{C}=\bar{A} + \bar{B}$ (sum of pushforwards of summands) 
+  then, $\dot{C}=\dot{A} + \dot{B}$ (sum of pushforwards of summands) 
 
   \vfill\null
   \columnbreak
 
-  \subsection{Binary Multiplication}
-  todo
+  \subsection{Pushforward of Binary Multiplication}
+  let $C=*(s_1,s_2,s_3)(A,B)$, then\\
+  $\dot{C} = *(s_1 s_4, s_2, s_3 s_4)(\dot{A}, B) + *(s_1, s_2 s_4, s_3 s_4)(A, \dot{B})$
 
+  \subsubsection{Proof}
+  use definition of derivative: $\dot{C} = \frac{\partial C}{\partial A} \dot{A} + \frac{\partial C}{\partial B} \dot{B}$\\
+  consider the case of $\frac{\partial C}{\partial B} \dot{B}$ (contribution from node $B$):\\
+
+  $\frac{\partial C}{\partial B} \dot{B} = C(x+h) - C(x) - \dot{C} \circ h$\\
+  $= *(s_1, s_2, s_3)(A, B(x+h))\\
+  - *(s_1, s_2, s_3)(A, B(x))\\
+  - *(s_1, s_2 s_4, s_3 s_4)(A, \dot{B}) \circ h$\\
+
+  where we let $\dot{C}= *(s_1, s_2 s_4, s_3 s_4)(A,\dot{B})$\\
+  where $s_4$ is the index set of input $x$ to $B$
+
+  using inner tensor difinition:\\
+  $x \circ y = *(s_1 s_2, s_2, s_1)(x,y)$\\
+
+  $C(x+h) - C(x) - \dot{C} \circ h =\\
+  *(s_1, s_2, s_3)(A, B(x+h))\\
+  - *(s_1, s_2, s_3)(A, B(x))\\
+  - *(s_3 s_4, s_4, s_3)(*(s_1, s_2 s_4, s_3 s_4)(A, \dot{B}), h)$\\
+
+  using associativity:\\
+  $*(s_3 s_4, s_4, s_3)(*(s_1, s_2 s_4, s_3 s_4)(A, \dot{B}), h)\\ = *(s_1, s_2, s_3)(A, *(s_2 s_4, s_4, s_2)(\dot{B}, h))$\\
+
+  $C(x+h) - C(x) - \dot{C} \circ h =\\
+  *(s_1, s_2, s_3)(A, B(x+h))\\
+  - *(s_1, s_2, s_3)(A, B(x))\\
+  - *(s_1, s_2, s_3)(A, *(s_2 s_4, s_4, s_2)(\dot{B}, h))$\\
+
+  using distributivity:
+
+  $C(x+h) - C(x) - \dot{C} \circ h =\\
+  *(s_1, s_2, s_3)(A, B(x+h) - B(x) - *(s_2 s_4, s_4, s_2)(\dot{B}, h))$\\
+
+  using definition of derivative:
+
+  $\lim_{h \rightarrow 0} \frac{\| B(x+h) - B(x) - \dot{B} \circ h \|}{\|h\|} = 0 \iff \\ \dot{B}$ is a derivative of $B$ at $x$\\
+
+  $\lim_{h \rightarrow 0} \frac{\| C(x+h) - C(x) - \dot{C} \circ h \|}{\|h\|} \\ \leq \|A\| \lim_{h \rightarrow 0} \frac{\| B(x+h) - B(x) - \dot{B} \circ h \|}{\|h\|} = 0$\\
+  $\iff *(s_1, s_2 s_4, s_3 s_4)(A, \dot{B})$ is the pushfoward contribution to $\dot{C}$ from $B$\\
+
+  similar logic follows for contribution to $\dot{C}$ from $A$, then the proof is complete
+  
   \vfill\null
   \columnbreak
     
