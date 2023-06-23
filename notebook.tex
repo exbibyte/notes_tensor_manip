@@ -179,7 +179,7 @@
 
   Generalized cases of local node connections:
   \begin{itemize}
-  \item unary function
+  \item general unary function
   \item element-wise unary function
   \item binary addition
   \item binary multiplication
@@ -190,9 +190,62 @@
   \vfill\null
   \columnbreak
     
-  \subsection{Pushforward of Unary Function}
-  todo
+  \subsection{Pushforward of General Unary Function}
+  let:\\
+  $f$ be a unary function with:
+  \begin{itemize}
+  \item domain index set $s_1$
+  \item range index set $s_2$
+  \end{itemize}
+  $x$ be an input variable with index set $s_3$\\
+  $C=f(A)$, where $A$  and $C$ are nodes in expression DAG,\\
+  then, the pushforward $\dot{C}$ is:\\
+  $\dot{C} = *(s_2 s_1, s_1 s_3, s_2 s_3)( f'(A), \dot{A})$\\
+  where $f'$ is the derivative of $f$
 
+  \subsubsection{Proof}
+  $f'$ is drivative of $f$ $\iff$ $\lim_{\tilde{h} \rightarrow 0} \frac{\| f(A+\tilde{h}) - f(A) - f'(A) \circ \tilde{h} \|}{\| \tilde{h} \|} = 0$\\
+
+  let $\tilde{h} = A(x+h) - A(x)$\\
+  $\tilde{h} \rightarrow 0$ as $h \rightarrow 0$\\
+
+  $\lim_{\tilde{h} \rightarrow 0} \frac{\| f(A+\tilde{h}) - f(A) - f'(A) \circ \tilde{h} \|}{\| \tilde{h} \|} = 0$\\
+  $\lim_{h \rightarrow 0} \frac{\| f(A + A(x+h) - A(x)) - f(A) - f'(A) \circ (A(x+h) - A(x)) \|}{\| A(x+h) - A(x) \|} = 0$\\
+  $\lim_{h \rightarrow 0} \frac{\| f(A(x+h)) - f(A) - f'(A) \circ (A(x+h) - A(x)) \|}{\| A(x+h) - A(x) \|} = 0$\\
+
+  let $\dot{A}$ be derivative of $A$ $\iff$ $\lim_{h\rightarrow 0} \frac{\| A(x+h) - A(x) - \dot{A} \circ h\|}{\| h \|} = 0$\\
+  triangular inequality:\\
+  $\lim_{h\rightarrow 0} \frac{\| A(x+h) - A(x) \|}{\| h \|} - \frac{\| - \dot{A} \circ h\|}{\| h \|} \\
+  \leq \lim_{h\rightarrow 0} \frac{\| A(x+h) - A(x) - \dot{A} \circ h\|}{\| h \|} = 0$\\
+
+  $\lim_{h\rightarrow 0} \frac{\| A(x+h) - A(x)\|}{\| h \|} = \frac{\| - \dot{A} \circ h \|}{\| h \|}$\\
+
+  substitute:\\
+  $\lim_{h \rightarrow 0} \frac{\| f(A(x+h)) - f(A) - f'(A) \circ (A(x+h) - A(x)) \|}{\| A(x+h) - A(x) \|} = 0$\\
+  $\lim_{h \rightarrow 0} \frac{\| f(A(x+h)) - f(A) - f'(A) \circ (\dot{A} \circ h) \|}{\| A(x+h) - A(x) \|} = 0$\\
+
+  using definition of tensor inner product:\\
+  $\dot{A} \circ h = *(s_1 s_3, s_3, s_1)(\dot{A}, h)$\\
+  $f'(A) \circ (\dot{A} \circ h) = f'(A) \circ (*(s_1 s_3, s_3, s_1)(\dot{A}, h))$\\
+  $f'(A) \circ (\dot{A} \circ h) = *(s_2 s_1, s_1, s_2)(f'(A), *(s_1 s_3, s_3, s_1)(\dot{A}, h))$\\
+
+  using associativity:\\
+  $f'(A) \circ (\dot{A} \circ h) = *(s_2 s_3, s_3, s_2)(*(s_2 s_1, s_1 s_3, s_2 s_3)(f'(A), \dot{A}), h)$\\
+  $f'(A) \circ (\dot{A} \circ h) = *(s_2 s_1, s_1 s_3, s_2 s_3)(f'(A), \dot{A}) \circ h$\\
+
+  $\lim_{h \rightarrow 0} \frac{\| f(A(x+h)) - f(A) - *(s_2 s_1, s_1 s_3, s_2 s_3)(f'(A), \dot{A}) \circ h \|}{\| A(x+h) - A(x) \|} = 0$\\
+
+  $\tilde{h} \rightarrow 0$ as $h \rightarrow 0$\\
+  $(\exists k) \| A(x+h) - A(x) \| \leq \frac{1}{k} \| h \|$\\
+  $(\exists k) \frac{k}{\|h\|} \leq \frac{1}{\| A(x+h) - A(x) \|}$\\
+  then
+
+  $\lim_{h \rightarrow 0} \frac{ k \| f(A(x+h)) - f(A) - *(s_2 s_1, s_1 s_3, s_2 s_3)(f'(A), \dot{A}) \circ h \|}{\|h\|} \leq \lim_{h\rightarrow 0} \frac{\| f(A(x+h)) - f(A) - *(s_2 s_1, s_1 s_3, s_2 s_3)(f'(A), \dot{A}) \circ h \|}{\|A(x+h) - A(x)\|} = 0$\\
+
+  $\lim_{h \rightarrow 0} \frac{\| f(A(x+h)) - f(A) - *(s_2 s_1, s_1 s_3, s_2 s_3)(f'(A), \dot{A}) \circ h \|}{\|h\|} = 0$ \\
+  $\iff *(s_2 s_1, s_1 s_3, s_2 s_3)(f'(A), \dot{A}) = \dot{C}$ \\
+  is derivative of $f(A(x))$ wrt. $x$, then $\dot{C}$ is a pushforward of $C$
+  
   \vfill\null
   \columnbreak
 
