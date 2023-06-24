@@ -180,7 +180,7 @@
   Generalized cases of local node connections:
   \begin{itemize}
   \item general unary function
-  \item element-wise unary function
+  \item elementwise unary function
   \item binary addition
   \item binary multiplication
   \end{itemize}
@@ -250,7 +250,44 @@
   \columnbreak
 
   \subsection{Pushforward of Elementwise Unary Function}
-  todo
+  let:\\
+  $x$ be an input variable with index set $s_2$\\
+  $f$ is an elementwise function\\
+  $A$ is a node in the expression DAG with index set $s_1$\\
+  $C=f(A)$\\
+  then:\\
+  pushforward of node $C$, $\dot{C}$, is:\\
+  $\dot{C} = *(s_1, s_1 s_2, s_1 s_2)(f'(A), \dot{A})$\\
+  where $f'$ is derivative of $f$
+
+  \subsubsection{Proof}
+  using definition of derivative:\\
+  $\lim_{h\rightarrow 0} \frac{1}{\|h\|} \|A(x+h)-A(x)-\dot{A} \circ h\| = 0$\\
+  $\iff \dot{A}$ is derivative of $A$\\
+  per scalar tensor entry indexed by multi-indices $s$:\\
+  $\lim_{h\rightarrow0} \frac{1}{\|h\|} |A(x+h)_s - A(x)_s - (\dot{A} \circ h)_s | =0$\\
+  using chain rule:\\
+  let $g(x) = A(x)_s$\\
+  $f(g(x))=f(A(x)_s)$\\
+  $(f(g(x)))' = f'(g(x)) g'(x)$\\
+  $g'(x) = \dot{A}_s$\\
+  $(f(g(x)))' = f'(A(x)_s) \dot{A}_s$\\
+  using defintion of derivative:\\
+  $(f(g(x)))'$ is derivative of $f(g(x))$\\
+  $\iff \lim_{h\rightarrow 0} \frac{1}{\| h \|} | f(g(x+h)) - f(g(x)) - (f(g(x)))' \circ h_s | = 0$\\
+  $\lim_{h\rightarrow 0} \frac{1}{\| h \|} | f(A(x+h)_s) - f(A(x)_s) - f'(A(x)_s) \dot{A}_s \circ h_s | = 0$\\
+  $\lim_{h\rightarrow 0} \frac{1}{\| h \|} | f(A(x+h)_s) - f(A(x)_s) - f'(A(x)_s) (\dot{A} \circ h)_s | = 0$\\
+  above holds for all multi-indices $s$ $\implies$\\
+  $\lim_{h\rightarrow 0} \frac{\| f(A(x+h)) - f(A(x)) - *(s_1, s_1, s_1)(f'(A(x)), \dot{A} \circ h) \|}{\| h \|} = 0$\\
+  using inner tensor product definition:\\
+  $*(s_1,s_1,s_1)(f'(A(x)), \dot{A} \circ h) = *(s_1,s_1,s_1)(f'(A(x)), *(s_1 s_2, s_2, s_1)(\dot{A}, h))$\\
+  using associativity rule:\\
+  $*(s_1,s_1,s_1)(f'(A(x)), \dot{A} \circ h) = *(s_1 s_2, s_2, s_1)(*(s_1, s_1 s_2, s_1 s_2)(f'(A(x)), \dot{A}), h)$\\
+  $*(s_1,s_1,s_1)(f'(A(x)), \dot{A} \circ h) = *(s_1, s_1 s_2, s_1 s_2)(f'(A(x)), \dot{A}) \circ h$\\
+  substitute:\\
+  $\lim_{h\rightarrow 0} \frac{\| f(A(x+h)) - f(A(x)) - *(s_1, s_1 s_2, s_1 s_2)(f'(A(x)), \dot{A}) \circ h \|}{\| h \|} = 0$\\
+  $\iff *(s_1, s_1 s_2, s_1 s_2)(f'(A(x)), \dot{A})$ is derivative of $f(A(x))$ wrt. $x$\\
+  $\iff \dot{C}$, pushforward of $C$, is $*(s_1, s_1 s_2, s_1 s_2)(f'(A(x)), \dot{A})$
 
   \vfill\null
   \columnbreak
