@@ -349,9 +349,92 @@
   \columnbreak
     
   \section{Reverse Mode}
+
+  node $v_i$ stores $\frac{\partial y_j}{\partial v_i} = \bar{v_i}$\\
+
+  computing for node $z$:\\
+  $\bar{z} = \frac{\partial y_j}{\partial z} = \sum_f \frac{\partial y_j}{\partial f} \frac{\partial f}{\partial z}$ where $f$ is successor/output node of $z$, eg: there is an outgoing edge from $z$ to $f$\\
+  
+  $\bar{z} = \sum_f \bar{f} \frac{\partial f}{\partial z}$, where $\bar{f}$ is the pullback of $f$ and is computed and cached at node $f$ by the time $\bar{z}$ needs to be updated\\
+  
+  $O(m)$ rounds for $m$ outputs $y_j$\\
+
+  Generalized cases of local node connections:
+  \begin{itemize}
+  \item general unary function
+  \item elementwise unary function
+  \item binary addition
+  \item binary multiplication
+  \end{itemize}
+
+    \vfill\null
+    \columnbreak
+    
+  \subsection{Pullback of General Unary Function}
+  todo
+
+  \vfill\null
+  \columnbreak
+    
+  \subsection{Pullback of Elementwise Unary Function}
   todo
   
+  \vfill\null
+  \columnbreak
+  
+  \subsection{Pullback of Binary Addition}
+  let:\\
+  $C = +(A,B)$\\
+  then,\\
+  $\bar{A} = \bar{C}$\\
+  $\bar{B} = \bar{C}$\\
+  where $\bar{C}$ is the pullback of $C$
+
+  \vfill\null
+  \columnbreak
+  
+  \subsection{Pullback of Binary Multiplication}
+  let:
+  $Y$ be an output node with index set $s_4$\\
+  $C = *(s_1, s_2, s_3)(A, B)$ be a multiplication node of expression DAG\\
+  then, contribution of node $C$ to pullback $\bar{B}$ is:\\
+  $*(s_4 s_3, s_1, s_4 s_2)(\bar{C}, A)$\\
+  contribution of node $C$ to pullback $\bar{A}$ is:\\
+  $*(s_4 s_3, s_2, s_4 s_1)(\bar{C}, B)$
+
+  \subsubsection{Proof}
+  focus on derivation of pullback contribution to $\bar{B}$\\
+  using definition of derivative:\\
+  $\lim_{\tilde{h} \rightarrow 0} \frac{1}{\|\tilde{h}\|} \|Y(C+\tilde{h}) - Y(C) - \frac{\partial Y}{\partial C} \circ \tilde{h}\| = 0$\\
+  $\iff \bar{C} = \frac{\partial Y}{\partial C}$ is derivative of $Y$ evaluated at $C$\\
+
+  let $\tilde{h} = *(s_1, s_2, s_3)(A, h)$, then\\
+  $Y(C+\tilde{h}) - Y(C) - \bar{C} \circ \tilde{h}\\
+  = Y(C+*(s_1, s_2, s_3)(A,h)) - Y(C) - \bar{C} \circ *(s_1, s_2, s_3)(A,h)\\
+  = Y(*(s_1,s_2,s_3)(A,B) + *(s_1, s_2, s_3)(A,h)) - Y(*(s_1,s_2,s_3)(A,B)) - \bar{C} \circ *(s_1, s_2, s_3)(A,h)$\\
+  $= Y(*(s_1,s_2,s_3)(A,B+h)) - Y(*(s_1,s_2,s_3)(A,B)) - \bar{C} \circ *(s_1, s_2, s_3)(A,h)$\\
+
+  using definition of tensor inner product:\\
+  $\bar{C} \circ *(s_1, s_2, s_3)(A,h) = *(s_4 s_3, s_3, s_4)(\bar{C}, *(s_1, s_2, s_3)(A,h))$\\
+
+  using associativity property:\\
+  $\bar{C} \circ *(s_1, s_2, s_3)(A,h) = *(s_4 s_2, s_2, s_4)(*(s_4 s_3, s_1, s_4 s_2)(\bar{C}, A), h)$\\
+  $\bar{C} \circ *(s_1, s_2, s_3)(A,h) = *(s_4 s_3, s_1, s_4 s_2)(\bar{C}, A) \circ h$\\
+
+  $Y(C+\tilde{h}) - Y(C) - \bar{C} \circ \tilde{h}\\
+  = Y(*(s_1,s_2,s_3)(A,B+h)) - Y(*(s_1,s_2,s_3)(A,B))\\
+  - *(s_4 s_3, s_1, s_4 s_2)(\bar{C}, A) \circ h$\\
+
+  substitute:\\
+  $0=\lim_{h\rightarrow 0} \frac{1}{\|*(s_1, s_2, s_3)(A,h)\|} \|Y(*(s_1, s_2,s _3)(A,B+h)) - Y(*(s_1,s_2,s_3)(A,B) - *(s_4 s_3, s_1, s_4 s_2)(\bar{C}, A) \circ h\|$\\
+  $\iff *(s_4 s_3, s_1, s_4 s_2)(\bar{C}, A)$ is derivative of\\ $Y(*(s_1, s_2, s_3)(A, B))$ wrt. $B$\\
+  then, contribution of $C$ to $\bar{B}$, eg $(\frac{\partial Y}{\partial B})_{\text{via } C}$ is:\\ $*(s_4 s_3, s_1, s_4 s_2)(\bar{C}, A)$\\
+
+  use similar logic for derivation of pulllback contribution to $\bar{A}$:\\
+  contribution of $C$ to $\bar{A}$ is: $*(s_4 s_3, s_2, s_4 s_1)(\bar{C}, B)$
+
+  \vfill\null
+  \columnbreak
+    
 \end{multicols*}
 \end {document}
-
-
