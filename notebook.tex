@@ -410,10 +410,50 @@
   is the derivative of $Y(f(A))$ and is the contribution of node $C$ to pullback $\bar{A}$
   
   \vfill\null
-  \pagebreak
+  \columnbreak
     
   \subsection{Pullback of Elementwise Unary Function}
-  todo
+  let:\\
+  $Y$ be an output function with index set $s_2$\\
+  $f$ be an elementwise unary function\\
+  $A$ be a node in expression DAG with index set $s_1$\\
+  $C$ be a node in expression DAG with index set $s_1$\\
+  $C=f(A)$\\
+  then, contribution of $C$ to pullback $\bar{A}$ is:\\
+  $*(s_2 s_1, s_1, s_2 s_1)(\bar{f}, f'(A))$\\
+  where $f'$ is derivative of $f$
+  
+  \subsubsection{Proof}
+  $\bar{A}_{\text{via }f} = \frac{\partial Y}{\partial f} \frac{\partial f}{\partial A} = \bar{f}\frac{\partial f}{\partial A}$\\
+
+  $\bar{f}$ is derivative of $Y(f)$ satisfies:\\
+  $\lim_{\tilde{h} \rightarrow 0} \frac{1}{\| \tilde{h} \|} \| Y(f+\tilde{h}) - Y(f) - \bar{f} \circ \tilde{h} \| = 0$\\
+
+  let $\tilde{h} = f(A+h) - f(A)$, $f=f(A)$, then:\\
+  $Y(f+\tilde{h}) - Y(f) - \bar{f} \circ \tilde{h}\\
+  = Y(f(A+h)) - Y(f(A))\\ - \bar{f} \circ (f(A+h) - f(A))$\\
+
+  $f'$ is derivative of $f$ and entry-wise, then:\\
+  $\lim_{h\rightarrow 0} \frac{1}{\|h\|} \| f(A+h) - f(A)\\ - *(s_1, s_1, s_1)(f'(A), h) \| = 0$\\
+
+  $\tilde{h} \rightarrow 0$ as $h\rightarrow 0$, substitute:\\
+  $\lim_{h \rightarrow 0} \frac{1}{\|h\|} \|Y(f(A+h)) - Y(f(A))\\ - \bar{f} \circ (f(A+h) - f(A))\| = 0$\\
+  $\lim_{h \rightarrow 0} \frac{1}{\|h\|} \|Y(f(A+h)) - Y(f(A))\\ - \bar{f} \circ (*(s_1, s_1, s_1)(f'(A), h))\| = 0$\\
+
+  using tensor inner product definition:\\
+  $\bar{f} \circ (*(s_1, s_1, s_1)(f'(A), h))\\ = *(s_2 s_1, s_1, s_2)(\bar{f}, *(s_1,s_1,s_1)(f'(A), h))$\\
+
+  using associativity property:\\
+  $\bar{f} \circ (*(s_1, s_1, s_1)(f'(A), h))\\ = *(s_2, s_1, s_1, s_2)(*(s_2 s_1, s_1, s_2 s_1)(\bar{f}, f'(A)), h)$\\
+
+  using tensor inner product definition:\\
+  $\bar{f} \circ (*(s_1, s_1, s_1)(f'(A), h))\\ = *(s_2 s_1, s_1, s_2 s_1)(\bar{f}, f'(A)) \circ h$\\
+
+  substitute:\\
+  $\lim_{h \rightarrow 0} \frac{1}{\|h\|} \|Y(f(A+h)) - Y(f(A))\\ - \bar{f} \circ (*(s_1, s_1, s_1)(f'(A), h))\| = 0$\\
+  $\lim_{h \rightarrow 0} \frac{1}{\|h\|} \|Y(f(A+h)) - Y(f(A))\\ - *(s_2 s_1, s_1, s_2 s_1)(\bar{f}, f'(A)) \circ h\| = 0$\\
+  $\iff *(s_2 s_1, s_1, s_2 s_1)(\bar{f}, f'(A))$\\
+  is the derivative of $Y(f(A))$ wrt. $A$ and is the contribution of node $C$ to pullback $\bar{A}$\\
   
   \vfill\null
   \columnbreak
@@ -470,7 +510,7 @@
   contribution of $C$ to $\bar{A}$ is: $*(s_4 s_3, s_2, s_4 s_1)(\bar{C}, B)$
 
   \vfill\null
-  \columnbreak
+  \pagebreak
     
 \end{multicols*}
 \end {document}
