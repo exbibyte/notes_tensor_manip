@@ -159,7 +159,7 @@
   \section{Derivative Definition}
 
   $f: \R^{n_1 \times .. \times .. n_k} \rightarrow \R^{m_1 \times .. \times m_l}$\\
-  $D \in \R^{m_1 \times .. \times m_l \times n_1 \times .. \times n_k}$
+  $D \in \R^{m_1 \times .. \times m_l \times n_1 \times .. \times n_k}$=
 
   $\lim_{h \rightarrow 0} \frac{\| f(x+h) - f(x) - D \circ h\|}{\| h \|} = 0$\\
   $\iff D$ is a derivative of $f$ at $x$\\
@@ -367,14 +367,50 @@
   \item binary multiplication
   \end{itemize}
 
-    \vfill\null
-    \columnbreak
-    
-  \subsection{Pullback of General Unary Function}
-  todo
-
   \vfill\null
   \columnbreak
+    
+  \subsection{Pullback of General Unary Function}
+  let:\\
+  $Y$ be an output function with index set $s_3$\\
+  $f$ be a general unary function with domain index set $s_1$ and range index set $s_2$\\
+  $A, C$ be nodes in expression DAG\\
+  $C=f(A)$\\
+  then, contribution of $C$ to pullback of $A$, $\bar{A}$, is:\\
+  $*(s_3 s_2, s_2 s_1, s_3 s_1)(\bar{f}, f'(A))$ where $f'$ is derivative of $f$\\
+
+  \subsubsection{Proof}
+  $\bar{A} = \frac{\partial Y}{\partial A} = \frac{\partial Y}{\partial f} \frac{\partial f}{\partial A} = \bar{f} \frac{\partial f}{\partial A}$\\
+
+  $\bar{f}$ satisfies $\lim_{\tilde{h} \rightarrow 0} \frac{1}{\| \tilde{h} \|} \|Y(f+\tilde{h}) - Y(f) - \bar{f} \circ \tilde{h} \| = 0$\\
+
+  let:
+  $\tilde{h} = f(A+h) - f(A)$, $f=f(A)$\\
+  $Y(f+\tilde{h}) - Y(f) - \bar{f} \circ \tilde{h} = Y(f(A+h)) - Y(f(A)) - \bar{f} \circ (f(A+h) - f(A))$\\
+
+  $f'$ satisfies $\lim_{h \rightarrow 0} \frac{1}{\| h \|} \| f(A+h) - f(A) - f'(A) \circ h \| = 0$\\
+
+  substitute:\\
+  $\lim_{\tilde{h} \rightarrow 0} \frac{1}{\| \tilde{h} \|} \|Y(f+\tilde{h}) - Y(f) - \bar{f} \circ \tilde{h} \| = 0$\\
+  $\lim_{h \rightarrow 0} \frac{1}{\| h \|} \|Y(f(A+h)) - Y(f(A)) - \bar{f} \circ (f(A+h) - f(A))\| = 0$\\
+  $\lim_{h \rightarrow 0} \frac{1}{\| h \|} \|Y(f(A+h)) - Y(f(A)) - \bar{f} \circ (f'(A) \circ h)\| = 0$\\
+
+  using tensor inner product:\\
+  $f'(A) \circ h = *(s_2 s_1, s_1, s_2)(f'(A), h)$\\
+  $\lim_{h \rightarrow 0} \frac{1}{\| h \|} \|Y(f(A+h)) - Y(f(A)) - \bar{f} \circ (*(s_2 s_1, s_1, s_2)(f'(A), h))\| = 0$\\
+
+  using tensor inner product:\\
+  $\lim_{h \rightarrow 0} \frac{1}{\| h \|} \|Y(f(A+h)) - Y(f(A)) \\ - *(s_3 s_2, s_2, s_3)(\bar{f}, *(s_2 s_1, s_1, s_2)(f'(A), h))\| = 0$\\
+
+  using associativity:\\
+  $\lim_{h \rightarrow 0} \frac{1}{\| h \|} \|Y(f(A+h)) - Y(f(A)) \\ - *(s_3 s_1, s_1, s_3)(*(s_3 s_2, s_2 s_1, s_3 s_1)(\bar{f}, f'(A)), h) \| = 0$\\
+  
+  $\lim_{h \rightarrow 0} \frac{1}{\| h \|} \|Y(f(A+h)) - Y(f(A)) \\ - *(s_3 s_2, s_2 s_1, s_3 s_1)(\bar{f}, f'(A)) \circ h \| = 0$\\
+  $\iff *(s_3 s_2, s_2 s_1, s_3 s_1)(\bar{f}, f'(A))$\\
+  is the derivative of $Y(f(A))$ and is the contribution of node $C$ to pullback $\bar{A}$
+  
+  \vfill\null
+  \pagebreak
     
   \subsection{Pullback of Elementwise Unary Function}
   todo
