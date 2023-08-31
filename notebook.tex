@@ -83,12 +83,18 @@
   \subsection{Features}
   
   \begin{itemize}
-  \item self-documenting notation for layouts of input and output arrays
+  \item self-documenting notation (via strings) for layouts of input and output arrays
+  \item binding patterns to tensor/array dimensions
+  \item optionally provide parameters to named dimensions
+  \item  wildcard $...$ for omission of zero or more range of axes/dimensions
+  \item anonymous axis by specifying its size, but can't be matched across tensors
+  \item allow new output indices by copy/repeat operation
+  \item reduction via presence of matching indices in inputs or via omission of indices in output notation
   \item low number of backend functions to implement
   \item focus on data rearrangements and simple transformations (axes reordering, decomposition, composition, reduction, repeats)
   \item focus on 1 tensor/array transformations
-  \item notation uses strings
   \item supported notations: named axis, anonymous axis, unitary axis, ellipsis, (de)compose parenthesis
+  \item (de)composition operator, eg: $(a\ b)$
   \item supports a list of arrays as input with implied additional outer dimension corresponding to the list
   \item inferrable dimension sizes, given partial info as parameters
   \item hide backend framework inconsistency of notations for common array rearrangement operations
@@ -105,6 +111,7 @@
   \item evidence based for API design, via real world use cases
   \item explicit separation of a few functions over 1 function, for better error messages
   \item consideration of adoption friction and ease of use
+  \item under the hood, uses reshape-transpose-reshape sequence to achieve transforms
   \end{itemize}
 
   \vfill\null
@@ -128,6 +135,34 @@
   $s_2$: input index set\\
   $s_3$: output index set
 
+  sum/contraction over all entries that are addressed by shared indices:\\
+  eg: $C \leftarrow op(s_1, s_2, s_3)(A,B)$ shorthand for:\\
+  $C[s_3] \leftarrow \sum_{(s_1 \cup s_2) \setminus s_3} op(A[s_1], B[s_2])$
+
+  \subsection{Notation with Contravariant and Covariant Index} 
+
+  bound index: index occurs both in subscript and superscript
+
+  free index: index occurs only once in subscript or superscript
+    
+  applying unary function to object keeps the indices:\\
+  $exp(A^i_j) = exp(A)^i_j$
+
+  contractions occur for bound indices, eg: $A^i_j B^j_x = C^i_x$
+  
+  special symbols:
+  \begin{itemize}
+  \item
+    $\delta^i_j = \begin{cases}
+    0, & i \neq j\\
+    1, & i = j
+                  \end{cases}$ (linear identity map)
+  \item $\delta_{ii}$, $\delta^{ii}$ (op for transposition between vector / covector)
+  \item $0^i_j$, $0^i$, etc.
+  \item $A^j_i \delta^i_j = A^j_j = trace(A)$
+  \item $det(A^j_i)$
+  \end{itemize}
+  
   \subsection{Properties}
 
   \begin{itemize}
@@ -144,16 +179,13 @@
     $(s_1 \rightarrow s_2 s_4) \rightarrow s_4 \rightarrow s_3$\\
     vs\\
     $s_1 \rightarrow (s_2 s_4 \rightarrow s_4) \rightarrow s_3$
-     
-    \item commutative
+  \item commutative
 
-      $(s_1,s_2,s_3)(A,B) = *(s_2,s_1,s_3)(B,A)$
-    
-    \item distributive
+    $(s_1,s_2,s_3)(A,B) = *(s_2,s_1,s_3)(B,A)$
+  \item distributive
 
-      $*(s_1,s_2,s_3)(A,B) + *(s_1,s_2,s_3)(A,C)\\= *(s_1,s_2,s_3)(A, B+C)$\\
-      where $s_3 \subseteq s_1 \cup s_2$
-
+    $*(s_1,s_2,s_3)(A,B) + *(s_1,s_2,s_3)(A,C)\\= *(s_1,s_2,s_3)(A, B+C)$\\
+    where $s_3 \subseteq s_1 \cup s_2$
   \end{itemize}
 
   \section{Derivative Definition}
@@ -167,6 +199,31 @@
   where inner tensor product is: \\
   $D \circ h = *(s_1 s_2, s_2, s_1)(D,h)$
 
+  \section{Pushforward and Pullback}
+
+  let $\bar{v} = \frac{\partial y}{\partial v}$ (pullback of node $v$)
+  
+  let $\dot{v} = \frac{\partial v}{\partial x}$ (pushforward of node $v$)
+
+  then, for mixed mode:
+  \begin{flalign*}
+    \frac{\partial y}{\partial x} &= \sum_v \frac{\partial y}{\partial v} \frac{\partial v}{\partial x}\\
+    &= \sum_v \bar{v} \dot{v}\\
+    &= \sum_{v \in S} *(s_1 s_v, s_v s_2, s_1 s_2)(\bar{v}, \dot{v})
+  \end{flalign*}
+
+  where:\\
+  $s_1 \equiv$ index set of output function y\\
+  $s_2 \equiv$ index set of input x\\
+  $s_v \equiv$ index set of node $v$\\
+  $S \equiv$ set of nodes in any cut of the DAG
+
+  computation savings from reordering but hard in general to find best solution:
+  \begin{itemize}
+    \item compressing order of tensors when possible
+    \item multiply terms in order of tensor-order: vectors first, matrices next, ...
+  \end{itemize}
+    
   \vfill\null
   \columnbreak
     
