@@ -83,10 +83,11 @@
   \subsection{Features}
   
   \begin{itemize}
+  \item user exposed functions: rearrange, reduce, repeat
   \item self-documenting notation (via strings) for layouts of input and output arrays
   \item binding patterns to tensor/array dimensions
   \item optionally provide parameters to named dimensions
-  \item  wildcard $...$ for omission of zero or more range of axes/dimensions
+  \item wildcard $...$ for omission of zero or more range of axes/dimensions
   \item anonymous axis by specifying its size, but can't be matched across tensors
   \item allow new output indices by copy/repeat operation
   \item reduction via presence of matching indices in inputs or via omission of indices in output notation
@@ -98,11 +99,18 @@
   \item supports a list of arrays as input with implied additional outer dimension corresponding to the list
   \item inferrable dimension sizes, given partial info as parameters
   \item hide backend framework inconsistency of notations for common array rearrangement operations
-  \item use of proxy classes for specific backends
-  \item caching of tensor type map to backend type for performance
-  \item caching of patterns and axes
-  \item caching of patterns, axes, and input shape: compute unknown axis sizes and shape verification on first time, otherwise reuse sequence of commands previously generated
+  \item each backend needs to implement some necessary tensor operations; proxy classes for these backends
   \item inverse transformations are easy to read off by switching patterns for input and output
+  \end{itemize}
+
+  \subsection{Optimizations}
+  \begin{itemize}
+  \item caching of tensor type map to backend type for performance
+  \item caching of patterns, axes, and input shape\\
+
+    compute unknown axis sizes and shape verification on first time, otherwise reuse sequence of commands previously generated\\
+    
+    only need shape verification, unknown axes size when other parameters are already cached
   \end{itemize}
 
   \subsection{Approaches}
@@ -128,7 +136,21 @@
 
   \section{Tensor Indexing}
 
-  Index notation (for a binary operation):\\
+  abstract index notation:
+  \begin{itemize}
+  \item index is a label for slot
+  \item index position matters
+  \item coordinate independent, useful to represent tensor transformations
+  \end{itemize}
+
+  (einstein) index notation:
+  \begin{itemize}
+  \item index represent incrementing range just as in programming
+  \item indexing refers to components
+  \item basis dependent
+  \end{itemize}
+  
+  index notation (for a binary operation):\\
   $*(s_1,s_2,s_3)$\\
   where\\
   $s_1$: input index set\\
@@ -143,7 +165,9 @@
 
   bound index: index occurs both in subscript and superscript
 
-  free index: index occurs only once in subscript or superscript
+  free index: index occurs only once in subscript or superscript; number of free indices is equal to the order of the tensor
+
+  $(x,y)$-tensor has $x$ contravariant (upper) free indices, $y$ covariant (lower) free indices; with a total order of $x+y$
     
   applying unary function to object keeps the indices:\\
   $exp(A^i_j) = exp(A)^i_j$
@@ -157,9 +181,9 @@
     0, & i \neq j\\
     1, & i = j
                   \end{cases}$ (linear identity map)
-  \item $\delta_{ii}$, $\delta^{ii}$ (op for transposition between vector / covector)
-  \item $0^i_j$, $0^i$, etc.
-  \item $A^j_i \delta^i_j = A^j_j = trace(A)$
+  \item $\delta_{ii}$, $\delta^{ii}$ (transposition operation)
+  \item $0^i_j $ (linear map to 0), $0^i$ (0 vector), etc.
+  \item $A^j_i \delta^i_j = A^j_j = \sum_j a^j_j = trace(A)$
   \item $det(A^j_i)$
   \end{itemize}
   
